@@ -4,7 +4,7 @@ using NetShape.Core.Models;
 using NetShape.Core.Processors;
 using NetShape.Core.Queues;
 
-namespace Core.Tests;
+namespace NetShape.Tests.Core.Tests;
 
 public class CoordinatorTests
 {

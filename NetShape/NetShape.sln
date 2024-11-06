@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2D498EB6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5B0DCB5F-7315-40BE-9FBA-46D694C4CD84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Tests", "Core.Tests\Core.Tests.csproj", "{0378E07E-FC88-4DA1-8AFF-9660FDECD168}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetShape.Tests", "NetShape.Tests\NetShape.Tests.csproj", "{0378E07E-FC88-4DA1-8AFF-9660FDECD168}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
