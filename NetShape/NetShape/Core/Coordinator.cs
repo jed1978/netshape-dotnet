@@ -10,8 +10,9 @@ public class Coordinator<TRequest, TResponse>
     private readonly IConnector<TRequest, TResponse> _connector;
     private readonly IQueueService<GenericRequest<TRequest>> _requestQueue;
     private readonly IRequestProcessor<TRequest, TResponse> _processor;
-    
     private readonly ILogger _logger;
+    private CancellationTokenSource _cancellationTokenSource;
+    private Task _processingTask;
     
     public Coordinator(IConnector<TRequest,TResponse> connector, 
         IQueueService<GenericRequest<TRequest>> queue, 
@@ -34,20 +35,50 @@ public class Coordinator<TRequest, TResponse>
         _logger.LogDebug($"Enqueued request. RequestId: {request.RequestId}");
     }
 
-    public async Task StartAsync()
+    public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         // 啟動處理隊列的任務
-        await Task.Run(ProcessQueueAsync);
+        _logger.LogInformation("Coordinator is starting.");
+        _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        _processingTask = Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
+        await Task.CompletedTask;
     }
     
-    private async Task ProcessQueueAsync()
+    public async Task StopAsync()
     {
-        while (true)
+        _logger.LogInformation("Coordinator is stopping.");
+
+        if (_cancellationTokenSource != null)
+        {
+            _cancellationTokenSource.Cancel();
+            try
+            {
+                await _processingTask.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("Processing task was cancelled.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred during stopping Coordinator.");
+            }
+            finally
+            {
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
+            }
+        }
+        _logger.LogInformation("Coordinator has stopped.");
+    }
+    
+    private async Task ProcessQueueAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
         {
             var request = await _requestQueue.DequeueAsync();
             if (request != null)
             {
-                
                 _logger.LogDebug($"Dequeued request for processing. RequestId: {request.RequestId}");
                 try
                 {
@@ -66,13 +97,13 @@ public class Coordinator<TRequest, TResponse>
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error processing request: {@Request}", request);
-                    throw;
                 }
             }
             else
             {
-                await Task.Delay(100); // 無請求時等待
+                await Task.Delay(100, token); // 無請求時等待
             }
         }
+        _logger.LogInformation("Processing queue stopped.");
     }
 }
