@@ -13,9 +13,9 @@ public class Coordinator<TRequest, TResponse>
         IQueueService<GenericRequest<TRequest>> queue, 
         IRequestProcessor<TRequest, TResponse> processor)
     {
-        _connector = connector;
-        _processor = processor;
-        _requestQueue = queue;
+        _connector = connector ?? throw new ArgumentNullException(nameof(connector));
+        _requestQueue = queue ?? throw new ArgumentNullException(nameof(queue));
+        _processor = processor ?? throw new ArgumentNullException(nameof(processor));
         _connector.OnRequestReceived += OnRequestReceivedAsync;
     }
 

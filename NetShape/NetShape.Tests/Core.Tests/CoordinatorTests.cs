@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Moq;
 using NetShape.Core;
 using NetShape.Core.Models;
@@ -47,5 +48,63 @@ public class CoordinatorTests
         mockQueueService.Verify(q => q.EnqueueAsync(request), Times.Once);
         mockProcessor.Verify(p => p.ProcessAsync(request.Data), Times.Once);
         mockConnector.Verify(c => c.SendResponseAsync(It.IsAny<string>(), It.IsAny<IResponse<string>>()), Times.Once);
+    }
+    
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_Processor_Is_Null()
+    {
+        // Arrange
+        var mockConnector = new Mock<IConnector<string, string>>();
+        var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
+        IRequestProcessor<string, string> nullProcessor = null;
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            new Coordinator<string, string>(
+                    mockConnector.Object,
+                    mockQueueService.Object,
+                    nullProcessor
+                )
+        );
+
+        exception.Should().BeOfType<ArgumentNullException>()
+            .Which.ParamName.Should().Be("processor");
+    }
+    
+    [Fact]
+    public void Coordinator_Constructor_Should_Throw_ArgumentNullException_When_Connector_Is_Null()
+    {
+        // Arrange
+        IConnector<string, string> nullConnector = null;
+        var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new Coordinator<string, string>(
+            nullConnector,
+            mockQueueService.Object,
+            mockProcessor.Object
+        ));
+        
+        exception.Should().BeOfType<ArgumentNullException>()
+            .Which.ParamName.Should().Be("connector");
+    }
+
+    [Fact]
+    public void Coordinator_Constructor_Should_Throw_ArgumentNullException_When_QueueService_Is_Null()
+    {
+        // Arrange
+        var mockConnector = new Mock<IConnector<string, string>>();
+        IQueueService<GenericRequest<string>> nullQueueService = null;
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new Coordinator<string, string>(
+            mockConnector.Object,
+            nullQueueService,
+            mockProcessor.Object
+        ));
+        exception.Should().BeOfType<ArgumentNullException>()
+            .Which.ParamName.Should().Be("queue");
     }
 }
