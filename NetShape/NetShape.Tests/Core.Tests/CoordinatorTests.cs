@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NetShape.Core;
 using NetShape.Core.Models;
@@ -16,7 +17,8 @@ public class CoordinatorTests
         var mockConnector = new Mock<IConnector<string, string>>();
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
-
+        var mockLogger = new Mock<ILogger>();
+        
         var request = new GenericRequest<string> { RequestId = "1", Data = "Test Request" };
         var response = "Processed Response";
 
@@ -32,8 +34,8 @@ public class CoordinatorTests
         var coordinator = new Coordinator<string, string>(
             mockConnector.Object,
             mockQueueService.Object,
-            mockProcessor.Object
-        );
+            mockProcessor.Object, 
+            mockLogger.Object);
 
         // Act
         await coordinator.StartAsync();
@@ -57,14 +59,15 @@ public class CoordinatorTests
         var mockConnector = new Mock<IConnector<string, string>>();
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         IRequestProcessor<string, string> nullProcessor = null;
+        var mocklogger = new Mock<ILogger>();
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() =>
             new Coordinator<string, string>(
                     mockConnector.Object,
                     mockQueueService.Object,
-                    nullProcessor
-                )
+                    nullProcessor, 
+                    mocklogger.Object)
         );
 
         exception.Should().BeOfType<ArgumentNullException>()
@@ -78,13 +81,14 @@ public class CoordinatorTests
         IConnector<string, string> nullConnector = null;
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        var mocklogger = new Mock<ILogger>();
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() => new Coordinator<string, string>(
             nullConnector,
             mockQueueService.Object,
-            mockProcessor.Object
-        ));
+            mockProcessor.Object, 
+            mocklogger.Object));
         
         exception.Should().BeOfType<ArgumentNullException>()
             .Which.ParamName.Should().Be("connector");
@@ -97,13 +101,14 @@ public class CoordinatorTests
         var mockConnector = new Mock<IConnector<string, string>>();
         IQueueService<GenericRequest<string>> nullQueueService = null;
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        var mocklogger = new Mock<ILogger>();
 
         // Act & Assert
         var exception = Assert.Throws<ArgumentNullException>(() => new Coordinator<string, string>(
             mockConnector.Object,
             nullQueueService,
-            mockProcessor.Object
-        ));
+            mockProcessor.Object, 
+            mocklogger.Object));
         exception.Should().BeOfType<ArgumentNullException>()
             .Which.ParamName.Should().Be("queue");
     }
