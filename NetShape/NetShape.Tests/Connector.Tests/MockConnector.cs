@@ -1,4 +1,5 @@
 using NetShape.Core;
+using NetShape.Core.Connectors;
 using NetShape.Core.Models;
 
 namespace NetShape.Tests.Connector.Tests;
