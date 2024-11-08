@@ -1,6 +1,6 @@
 using NetShape.Core.Models;
 
-namespace NetShape.Core;
+namespace NetShape.Core.Connectors;
 
 public interface IConnector<TRequest, TResponse>
 {

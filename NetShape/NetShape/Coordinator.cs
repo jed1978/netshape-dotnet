@@ -2,6 +2,7 @@ using NetShape.Core.Models;
 using NetShape.Core.Processors;
 using NetShape.Core.Queues;
 using Microsoft.Extensions.Logging;
+using NetShape.Core.Connectors;
 
 namespace NetShape.Core;
 

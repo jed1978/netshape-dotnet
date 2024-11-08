@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetShape.Core;
+using NetShape.Core.Connectors;
 using NetShape.Core.Models;
 using NetShape.Core.Processors;
 using NetShape.Core.Queues;
