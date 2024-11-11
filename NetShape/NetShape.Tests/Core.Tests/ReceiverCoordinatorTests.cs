@@ -54,7 +54,6 @@ public class ReceiverCoordinatorTests
             Data = "Test Response"
         };
         
-        
         mockResponseQueue.SetupSequence(q => q.DequeueAsync())
             .ReturnsAsync(response)
             .ReturnsAsync((GenericResponse<string>)null);
@@ -71,7 +70,7 @@ public class ReceiverCoordinatorTests
 
         // Act
         await coordinator.StartAsync(cts.Token);
-        await Task.Delay(1000); // Wait for the processing loop
+        await Task.Delay(600); // Wait for the processing loop
         await coordinator.StopAsync();
 
         // Assert
