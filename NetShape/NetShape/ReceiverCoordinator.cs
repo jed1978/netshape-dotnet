@@ -7,25 +7,28 @@ namespace NetShape.Core;
 
 public class ReceiverCoordinator<TRequest, TResponse>
 {
-    private readonly IConnector<TRequest, TResponse> _connector;
+    private readonly IConnector<TResponse> _connector;
     private readonly IQueueService<GenericRequest<TRequest>> _requestQueue;
     private readonly IQueueService<GenericResponse<TResponse>> _responseQueue;
     private readonly ILogger<ReceiverCoordinator<TRequest, TResponse>> _logger;
+    private readonly IRequestReceiver<TRequest> _requestReceiver;
+    
     private CancellationTokenSource _cancellationTokenSource;
     private Task _responseProcessingTask;
     
     public ReceiverCoordinator(
-        IConnector<TRequest, TResponse> connector,
+        IConnector<TResponse> connector,
         IQueueService<GenericRequest<TRequest>> requestQueue,
         IQueueService<GenericResponse<TResponse>> responseQueue,
-        ILogger<ReceiverCoordinator<TRequest, TResponse>> logger)
+        ILogger<ReceiverCoordinator<TRequest, TResponse>> logger, 
+        IRequestReceiver<TRequest> requestReceiver)
     {
         _connector = connector ?? throw new ArgumentNullException(nameof(connector));
         _requestQueue = requestQueue ?? throw new ArgumentNullException(nameof(requestQueue));
         _responseQueue = responseQueue ?? throw new ArgumentNullException(nameof(responseQueue));;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-        _connector.OnRequestReceived += OnRequestReceivedAsync;
+        requestReceiver.OnRequestReceived += OnRequestReceivedAsync;
+        _requestReceiver = requestReceiver;
     }
     private async Task OnRequestReceivedAsync(IRequest<TRequest> request)
     {

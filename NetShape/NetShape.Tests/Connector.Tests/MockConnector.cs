@@ -4,7 +4,7 @@ using NetShape.Core.Models;
 
 namespace NetShape.Tests.Connector.Tests;
 
-public class MockConnector<TRequest, TResponse> : IConnector<TRequest, TResponse>
+public class MockConnector<TRequest, TResponse> : IConnector<TResponse>
 {
     public event Func<IRequest<TRequest>, Task> OnRequestReceived;
 

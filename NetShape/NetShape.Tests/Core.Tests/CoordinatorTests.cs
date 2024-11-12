@@ -19,10 +19,11 @@ public class CoordinatorTests
     public async Task Coordinator_Should_Process_Request_And_Send_Response()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string, string>>();
+        var mockConnector = new Mock<IConnector<string>>();
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
         var mockLogger = new Mock<ILogger>();
+        var mockReceiverRequest = new Mock<IRequestReceiver<string>>();
         
         var request = new GenericRequest<string> { RequestId = "1", Data = "Test Request" };
         var response = "Processed Response";
@@ -41,13 +42,15 @@ public class CoordinatorTests
             mockConnector.Object,
             mockQueueService.Object,
             mockProcessor.Object, 
-            mockLogger.Object);
+            mockLogger.Object,
+            mockReceiverRequest.Object);
 
         // Act
         await coordinator.StartAsync(cts.Token);
 
         // 觸發請求接收事件
-        mockConnector.Raise(c => c.OnRequestReceived += null, request);
+        // mockConnector.Raise(c => c.OnRequestReceived += null, request);
+        await mockReceiverRequest.RaiseAsync(c => c.OnRequestReceived += null, request);
 
         // 等待處理完成
         await Task.Delay(100);
@@ -62,7 +65,7 @@ public class CoordinatorTests
     public void Constructor_Should_Throw_ArgumentNullException_When_Processor_Is_Null()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string, string>>();
+        var mockConnector = new Mock<IConnector<string>>();
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         IRequestProcessor<string, string> nullProcessor = null;
         var mocklogger = new Mock<ILogger>();
@@ -73,7 +76,8 @@ public class CoordinatorTests
                     mockConnector.Object,
                     mockQueueService.Object,
                     nullProcessor, 
-                    mocklogger.Object)
+                    mocklogger.Object,
+                    null)
         );
 
         exception.Should().BeOfType<ArgumentNullException>()
@@ -84,7 +88,7 @@ public class CoordinatorTests
     public void Coordinator_Constructor_Should_Throw_ArgumentNullException_When_Connector_Is_Null()
     {
         // Arrange
-        IConnector<string, string> nullConnector = null;
+        IConnector<string> nullConnector = null;
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
         var mocklogger = new Mock<ILogger>();
@@ -94,7 +98,8 @@ public class CoordinatorTests
             nullConnector,
             mockQueueService.Object,
             mockProcessor.Object, 
-            mocklogger.Object));
+            mocklogger.Object,
+            null));
         
         exception.Should().BeOfType<ArgumentNullException>()
             .Which.ParamName.Should().Be("connector");
@@ -104,7 +109,7 @@ public class CoordinatorTests
     public void Coordinator_Constructor_Should_Throw_ArgumentNullException_When_QueueService_Is_Null()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string, string>>();
+        var mockConnector = new Mock<IConnector<string>>();
         IQueueService<GenericRequest<string>> nullQueueService = null;
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
         var mockLogger = new Mock<ILogger>();
@@ -114,7 +119,8 @@ public class CoordinatorTests
             mockConnector.Object,
             nullQueueService,
             mockProcessor.Object, 
-            mockLogger.Object));
+            mockLogger.Object,
+            null));
         exception.Should().BeOfType<ArgumentNullException>()
             .Which.ParamName.Should().Be("queue");
     }
@@ -123,11 +129,12 @@ public class CoordinatorTests
     public async Task Coordinator_Should_Stop_Gracefully_When_CancellationToken_Is_Cancelled()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string, string>>();
+        var mockConnector = new Mock<IConnector<string>>();
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
         var mockLogger = new Mock<ILogger>();
-
+        var mockReceiverRequest = new Mock<IRequestReceiver<string>>();
+        
         var request = new GenericRequest<string> { RequestId = "1", Data = "Test Request", ConnectionId = "Connection1" };
         var response = "Test Response";
 
@@ -152,14 +159,16 @@ public class CoordinatorTests
             mockConnector.Object,
             mockQueueService.Object,
             mockProcessor.Object,
-            mockLogger.Object
+            mockLogger.Object,
+            mockReceiverRequest.Object
         );
 
         // Act
         await coordinator.StartAsync(cts.Token);
 
         // Simulate received the request
-        await mockConnector.RaiseAsync(c => c.OnRequestReceived += null, request);
+        //await mockConnector.RaiseAsync(c => c.OnRequestReceived += null, request);
+        await mockReceiverRequest.RaiseAsync(c => c.OnRequestReceived += null, request);
 
         // Trigger the cancellation operation
         cts.Cancel();
@@ -171,5 +180,6 @@ public class CoordinatorTests
         mockQueueService.Verify(q => q.EnqueueAsync(request), Times.Once);
         mockProcessor.Verify(p => p.ProcessAsync(request.Data), Times.Once);
         mockConnector.Verify(c => c.SendResponseAsync(request.ConnectionId, It.IsAny<IResponse<string>>()), Times.Once);
+        
     }
 }

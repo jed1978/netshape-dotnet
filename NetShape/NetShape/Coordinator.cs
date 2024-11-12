@@ -8,24 +8,27 @@ namespace NetShape.Core;
 
 public class Coordinator<TRequest, TResponse>
 {
-    private readonly IConnector<TRequest, TResponse> _connector;
+    private readonly IConnector<TResponse> _connector;
     private readonly IQueueService<GenericRequest<TRequest>> _requestQueue;
     private readonly IRequestProcessor<TRequest, TResponse> _processor;
     private readonly ILogger _logger;
+    private readonly IRequestReceiver<TRequest> _requestReceiver;
+    
     private CancellationTokenSource _cancellationTokenSource;
     private Task _processingTask;
     
-    public Coordinator(IConnector<TRequest,TResponse> connector, 
-        IQueueService<GenericRequest<TRequest>> queue, 
-        IRequestProcessor<TRequest, TResponse> processor, 
-        ILogger logger)
+    public Coordinator(IConnector<TResponse> connector,
+        IQueueService<GenericRequest<TRequest>> queue,
+        IRequestProcessor<TRequest, TResponse> processor,
+        ILogger logger, 
+        IRequestReceiver<TRequest> requestReceiver)
     {
         _connector = connector ?? throw new ArgumentNullException(nameof(connector));
         _requestQueue = queue ?? throw new ArgumentNullException(nameof(queue));
         _processor = processor ?? throw new ArgumentNullException(nameof(processor));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        
-        _connector.OnRequestReceived += OnRequestReceivedAsync;
+        requestReceiver.OnRequestReceived += OnRequestReceivedAsync;
+        _requestReceiver = requestReceiver;
     }
 
     private async Task OnRequestReceivedAsync(IRequest<TRequest> request)
