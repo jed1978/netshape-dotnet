@@ -28,16 +28,13 @@ public class CoordinatorTests
         var request = new GenericRequest<string> { RequestId = "1", Data = "Test Request" };
         var response = "Processed Response";
         var cts = new CancellationTokenSource();
-
-        // 模擬enqueue/dequeue
+        
         mockQueueService.SetupSequence(q => q.DequeueAsync())
             .ReturnsAsync(request)
             .ReturnsAsync((GenericRequest<string>)null);
         
-        // 模擬處理器返回結果
         mockProcessor.Setup(p => p.ProcessAsync(request.Data)).ReturnsAsync(response);
-
-        // 模擬連接器的事件觸發
+        
         var coordinator = new Coordinator<string, string>(
             mockConnector.Object,
             mockQueueService.Object,
@@ -47,12 +44,7 @@ public class CoordinatorTests
 
         // Act
         await coordinator.StartAsync(cts.Token);
-
-        // 觸發請求接收事件
-        // mockConnector.Raise(c => c.OnRequestReceived += null, request);
         await mockReceiverRequest.RaiseAsync(c => c.OnRequestReceived += null, request);
-
-        // 等待處理完成
         await Task.Delay(100);
 
         // Assert
@@ -167,12 +159,12 @@ public class CoordinatorTests
         await coordinator.StartAsync(cts.Token);
 
         // Simulate received the request
-        //await mockConnector.RaiseAsync(c => c.OnRequestReceived += null, request);
         await mockReceiverRequest.RaiseAsync(c => c.OnRequestReceived += null, request);
-
+    
         // Trigger the cancellation operation
         cts.Cancel();
-
+        await Task.Delay(100);
+        
         // Wait for gracefully stop
         await coordinator.StopAsync();
         
