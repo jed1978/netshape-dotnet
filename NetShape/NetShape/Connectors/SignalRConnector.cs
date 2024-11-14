@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using NetShape.Core;
-using NetShape.Core.Connectors;
 using NetShape.Core.Models;
 
 namespace NetShape.Connectors;
 
 /// <summary>
-/// SignalR 連接器，用於處理客戶端的請求和回應。
+/// SignalR connector used to handle client requests and responses.
 /// </summary>
 public class SignalRConnector<TRequest, TResponse> : Hub, IConnector<TResponse>
 {

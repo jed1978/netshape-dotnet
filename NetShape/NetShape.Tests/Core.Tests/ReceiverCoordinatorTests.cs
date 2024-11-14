@@ -2,7 +2,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetShape.Core;
-using NetShape.Core.Connectors;
 using NetShape.Core.Models;
 using NetShape.Core.Queues;
 
@@ -76,7 +75,7 @@ public class ReceiverCoordinatorTests
         // Act
         await coordinator.StartAsync(cts.Token);
         await Task.Delay(600); // Wait for the processing loop
-        await coordinator.StopAsync();
+        await coordinator.StopAsync(cts.Token);
 
         // Assert
         mockConnector.Verify(c => c.SendResponseAsync(response.ConnectionId, response), Times.Once);
@@ -119,7 +118,7 @@ public class ReceiverCoordinatorTests
         // Act
         await coordinator.StartAsync(cts.Token);
         await Task.Delay(600);
-        await coordinator.StopAsync();
+        await coordinator.StopAsync(cts.Token);
 
         // Assert
         mockConnector.Verify(c => c.SendResponseAsync(response.ConnectionId, response), Times.Once);

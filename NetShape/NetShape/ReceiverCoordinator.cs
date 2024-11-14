@@ -1,11 +1,11 @@
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NetShape.Core.Connectors;
 using NetShape.Core.Models;
 using NetShape.Core.Queues;
 
 namespace NetShape.Core;
 
-public class ReceiverCoordinator<TRequest, TResponse>
+public class ReceiverCoordinator<TRequest, TResponse> : IHostedService
 {
     private readonly IConnector<TResponse> _connector;
     private readonly IQueueService<GenericRequest<TRequest>> _requestQueue;
@@ -79,7 +79,7 @@ public class ReceiverCoordinator<TRequest, TResponse>
         _logger.LogInformation("Finished processing the response queue.");
     }
 
-    public async Task StopAsync()
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Stopping the receiver coordinator.");
 

@@ -1,6 +1,4 @@
-using NetShape.Core.Models;
-
-namespace NetShape.Core.Connectors;
+namespace NetShape.Core;
 
 public interface IConnector<TResponse>
 {
