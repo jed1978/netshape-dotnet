@@ -7,7 +7,7 @@ namespace NetShape.Core;
 
 public class ReceiverCoordinator<TRequest, TResponse> : IHostedService
 {
-    private readonly IConnector<TResponse> _connector;
+    private readonly IConnector<TRequest, TResponse> _connector;
     private readonly IQueueService<GenericRequest<TRequest>> _requestQueue;
     private readonly IQueueService<GenericResponse<TResponse>> _responseQueue;
     private readonly ILogger<ReceiverCoordinator<TRequest, TResponse>> _logger;
@@ -17,7 +17,7 @@ public class ReceiverCoordinator<TRequest, TResponse> : IHostedService
     private Task _responseProcessingTask;
     
     public ReceiverCoordinator(
-        IConnector<TResponse> connector,
+        IConnector<TRequest, TResponse> connector,
         IQueueService<GenericRequest<TRequest>> requestQueue,
         IQueueService<GenericResponse<TResponse>> responseQueue,
         ILogger<ReceiverCoordinator<TRequest, TResponse>> logger, 

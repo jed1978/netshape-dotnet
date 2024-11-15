@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{4B0A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestReceiverApp", "SampleApps\RequestReceiverApp\RequestReceiverApp.csproj", "{59CAA271-F27A-40FA-ABB2-F8734B239922}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessorWorker", "SampleApps\ProcessorWorker\ProcessorWorker.csproj", "{54C74981-05D2-4E46-85DF-DFE897B613B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,10 +32,15 @@ Global
 		{59CAA271-F27A-40FA-ABB2-F8734B239922}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59CAA271-F27A-40FA-ABB2-F8734B239922}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59CAA271-F27A-40FA-ABB2-F8734B239922}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54C74981-05D2-4E46-85DF-DFE897B613B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54C74981-05D2-4E46-85DF-DFE897B613B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54C74981-05D2-4E46-85DF-DFE897B613B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54C74981-05D2-4E46-85DF-DFE897B613B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{59530671-4A42-43CD-A01C-1333823E603C} = {5B0DCB5F-7315-40BE-9FBA-46D694C4CD84}
 		{0378E07E-FC88-4DA1-8AFF-9660FDECD168} = {2D498EB6-15A0-4C2A-8412-33BB118B24D8}
 		{59CAA271-F27A-40FA-ABB2-F8734B239922} = {4B0A18E5-3B27-4664-A237-7D57D07175A9}
+		{54C74981-05D2-4E46-85DF-DFE897B613B2} = {4B0A18E5-3B27-4664-A237-7D57D07175A9}
 	EndGlobalSection
 EndGlobal

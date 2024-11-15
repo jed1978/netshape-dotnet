@@ -46,7 +46,7 @@ public class ProcessorCoordinatorTests
         // Act
         await coordinator.StartAsync(cts.Token);
         await Task.Delay(600); // Wait for the processing loop
-        await coordinator.StopAsync();
+        await coordinator.StopAsync(cts.Token);
 
         // Assert
         mockProcessor.Verify(p => p.ProcessAsync(request.Data), Times.Once);
@@ -93,7 +93,7 @@ public class ProcessorCoordinatorTests
         // Act
         await coordinator.StartAsync(cts.Token);
         await Task.Delay(600);
-        await coordinator.StopAsync();
+        await coordinator.StopAsync(cts.Token);
 
         // Assert
         mockProcessor.Verify(p => p.ProcessAsync(request.Data), Times.Once);

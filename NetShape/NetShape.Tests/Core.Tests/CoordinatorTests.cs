@@ -18,7 +18,7 @@ public class CoordinatorTests
     public async Task Coordinator_Should_Process_Request_And_Send_Response()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string>>();
+        var mockConnector = new Mock<IConnector<string, string>>();
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
         var mockLogger = new Mock<ILogger>();
@@ -56,7 +56,7 @@ public class CoordinatorTests
     public void Constructor_Should_Throw_ArgumentNullException_When_Processor_Is_Null()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string>>();
+        var mockConnector = new Mock<IConnector<string, string>>();
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         IRequestProcessor<string, string> nullProcessor = null;
         var mocklogger = new Mock<ILogger>();
@@ -79,7 +79,7 @@ public class CoordinatorTests
     public void Coordinator_Constructor_Should_Throw_ArgumentNullException_When_Connector_Is_Null()
     {
         // Arrange
-        IConnector<string> nullConnector = null;
+        IConnector<string, string> nullConnector = null;
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
         var mocklogger = new Mock<ILogger>();
@@ -100,7 +100,7 @@ public class CoordinatorTests
     public void Coordinator_Constructor_Should_Throw_ArgumentNullException_When_QueueService_Is_Null()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string>>();
+        var mockConnector = new Mock<IConnector<string, string>>();
         IQueueService<GenericRequest<string>> nullQueueService = null;
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
         var mockLogger = new Mock<ILogger>();
@@ -120,7 +120,7 @@ public class CoordinatorTests
     public async Task Coordinator_Should_Stop_Gracefully_When_CancellationToken_Is_Cancelled()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string>>();
+        var mockConnector = new Mock<IConnector<string, string>>();
         var mockQueueService = new Mock<IQueueService<GenericRequest<string>>>();
         var mockProcessor = new Mock<IRequestProcessor<string, string>>();
         var mockLogger = new Mock<ILogger>();
@@ -162,10 +162,10 @@ public class CoordinatorTests
     
         // Trigger the cancellation operation
         cts.Cancel();
-        await Task.Delay(100);
         
         // Wait for gracefully stop
         await coordinator.StopAsync();
+        await Task.Delay(300);
         
         // Assert
         mockQueueService.Verify(q => q.EnqueueAsync(request), Times.Once);
