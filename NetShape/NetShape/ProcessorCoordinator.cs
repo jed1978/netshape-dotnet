@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NetShape.Core.Models;
@@ -6,7 +7,7 @@ using NetShape.Core.Queues;
 
 namespace NetShape;
 
-public class ProcessorCoordinator<TRequest, TResponse>
+public class ProcessorCoordinator<TRequest, TResponse> : IHostedService
 {
     private readonly IQueueService<GenericRequest<TRequest>> _requestQueue;
     private readonly IQueueService<GenericResponse<TResponse>> _responseQueue;
@@ -37,7 +38,7 @@ public class ProcessorCoordinator<TRequest, TResponse>
         return Task.CompletedTask;
     }
 
-    public async Task StopAsync()
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("ProcessorCoordinator is stopping.");
 

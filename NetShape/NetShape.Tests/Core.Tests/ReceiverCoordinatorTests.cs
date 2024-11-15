@@ -13,7 +13,7 @@ public class ReceiverCoordinatorTests
     public async Task Should_Enqueue_Request_When_Received()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string>>();
+        var mockConnector = new Mock<IConnector<string, string>>();
         var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
         var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
         var logger = NullLogger<ReceiverCoordinator<string, string>>.Instance;
@@ -44,7 +44,7 @@ public class ReceiverCoordinatorTests
     public async Task Should_Send_Response_To_Client_When_Response_Is_Dequeued()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string>>();
+        var mockConnector = new Mock<IConnector<string, string>>();
         var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
         var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
         var logger = NullLogger<ReceiverCoordinator<string, string>>.Instance;
@@ -85,7 +85,7 @@ public class ReceiverCoordinatorTests
     public async Task Should_Handle_Client_Disconnection_When_Sending_Response()
     {
         // Arrange
-        var mockConnector = new Mock<IConnector<string>>();
+        var mockConnector = new Mock<IConnector<string, string>>();
         var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
         var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
         var mockLogger = new Mock<ILogger<ReceiverCoordinator<string, string>>>();

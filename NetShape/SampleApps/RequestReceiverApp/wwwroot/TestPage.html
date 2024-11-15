@@ -9,6 +9,7 @@
 <body>
 <h1>ReceiverApp Client</h1>
 <button onclick="sendRequest()">Send Request</button>
+<div id="responseArea"></div>
 
 <script>
     const connection = new signalR.HubConnectionBuilder()
@@ -16,6 +17,8 @@
         .configureLogging(signalR.LogLevel.Information)
         .build();
 
+    let connectionId = null;
+    
     connection.start().then(() => {
         console.log("Connected to SignalR Hub");
     }).catch(err => console.error(err.toString()));
@@ -25,10 +28,21 @@
             requestId: `req-${Date.now()}`,
             data: "Sample Data"
         };
-        connection.invoke("SendRequest", request.requestId, request.data).then(() => {
-            console.log("Request sent:", request.requestId, request.data);
+
+        connection.invoke("SendRequest", request.requestId, request.data)
+            .then(() => {
+                console.log("Request sent:", request.requestId, request.data);
         }).catch(err => console.error(err.toString()));
     }
+
+    // 接收回應的處理器
+    connection.on("ReceiveResponse", function(response) {
+        console.log("Received response:", response);
+        const responseArea = document.getElementById("responseArea");
+        const responseDiv = document.createElement("div");
+        responseDiv.textContent = `Received response: requestId: ${response.requestId}, data: ${response.data}`;
+        responseArea.appendChild(responseDiv);
+    });
 </script>
 </body>
 </html>

@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.SignalR;
 using NetShape.Connectors;
+using NetShape.Connectors.SignalR;
 using NetShape.Core;
 using NetShape.Core.Models;
+using NetShape.Core.Processors;
 using NetShape.Core.Queues;
 using NetShape.Queues;
 using StackExchange.Redis;
@@ -32,15 +35,18 @@ public class Program
         builder.Services.AddSingleton<IQueueService<GenericResponse<string>>, RedisQueueService<GenericResponse<string>>>(
             provider => new RedisQueueService<GenericResponse<string>>(
                 provider.GetRequiredService<IConnectionMultiplexer>(),
-                "test-response",
+                "test-responses",
                 provider.GetRequiredService<ILogger<RedisQueueService<GenericResponse<string>>>>()
             ));
         
         // 註冊 IRequestReceiver
         builder.Services.AddSingleton<IRequestReceiver<string>, RequestReceiver<string>>();
+
+        // 註冊 IRequestProcessor
+        
         
         // Register SignalR Connector
-        builder.Services.AddSingleton<IConnector<string>, SignalRConnector<string, string>>();
+        builder.Services.AddSingleton<IConnector<string, string>, SignalRConnector<string, string>>();
 
         // Register ReceiverCoordinator
         builder.Services.AddSingleton<ReceiverCoordinator<string, string>>();
@@ -74,7 +80,7 @@ public class Program
         
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapHub<SignalRConnector<string, string>>("/hub"); // SignalR Hub
+            endpoints.MapHub<RequestHub>("/hub"); // SignalR Hub
         });
 
         app.Run();

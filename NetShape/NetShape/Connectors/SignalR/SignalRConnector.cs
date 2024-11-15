@@ -3,22 +3,25 @@ using Microsoft.Extensions.Logging;
 using NetShape.Core;
 using NetShape.Core.Models;
 
-namespace NetShape.Connectors;
+namespace NetShape.Connectors.SignalR;
 
 /// <summary>
 /// SignalR connector used to handle client requests and responses.
 /// </summary>
-public class SignalRConnector<TRequest, TResponse> : Hub, IConnector<TResponse>
+public class SignalRConnector<TRequest, TResponse> : IConnector<TRequest, TResponse>
 {
     private readonly ILogger<SignalRConnector<TRequest, TResponse>> _logger;
     private readonly IRequestReceiver<TRequest> _requestReceiver;
+    private readonly IHubContext<RequestHub> _hubContext;
     
     public SignalRConnector(
         ILogger<SignalRConnector<TRequest, TResponse>> logger,
-        IRequestReceiver<TRequest> requestReceiver)
+        IRequestReceiver<TRequest> requestReceiver, 
+        IHubContext<RequestHub> hubContext)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _requestReceiver = requestReceiver ?? throw new ArgumentNullException(nameof(requestReceiver));
+        _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
     }
 
     /// <summary>
@@ -26,7 +29,8 @@ public class SignalRConnector<TRequest, TResponse> : Hub, IConnector<TResponse>
     /// </summary>
     /// <param name="requestId">The unique identifier for the request.</param>
     /// <param name="data">The data of the request.</param>
-    public async Task SendRequest(string requestId, TRequest data)
+    /// <param name="connectionId"></param>
+    public async Task SendRequestAsync(string requestId, TRequest data, string connectionId)
     {
         if (string.IsNullOrEmpty(requestId))
         {
@@ -40,12 +44,12 @@ public class SignalRConnector<TRequest, TResponse> : Hub, IConnector<TResponse>
             throw new ArgumentNullException(nameof(data));
         }
 
-        _logger.LogInformation($"Received client request. RequestId: {requestId}, ConnectionId: {Context.ConnectionId}");
+        _logger.LogInformation($"Received client request. RequestId: {requestId}, ConnectionId: {connectionId}");
 
         var request = new GenericRequest<TRequest>
         {
             RequestId = requestId,
-            ConnectionId = Context.ConnectionId,
+            ConnectionId = connectionId,
             Data = data
         };
 
@@ -82,7 +86,7 @@ public class SignalRConnector<TRequest, TResponse> : Hub, IConnector<TResponse>
         try
         {
             _logger.LogInformation($"Sending response. RequestId: {response.RequestId}, ConnectionId: {connectionId}");
-            await Clients.Client(connectionId).SendAsync("ReceiveResponse", response);
+            await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveResponse", response);
             _logger.LogInformation($"Response sent. RequestId: {response.RequestId}, ConnectionId: {connectionId}");
         }
         catch (Exception ex)
@@ -90,31 +94,5 @@ public class SignalRConnector<TRequest, TResponse> : Hub, IConnector<TResponse>
             _logger.LogError(ex, $"An error occurred while sending the response. RequestId: {response.RequestId}, ConnectionId: {connectionId}");
             throw;
         }
-    }
-
-    /// <summary>
-    /// Event handler for when a client connects.
-    /// </summary>
-    public override async Task OnConnectedAsync()
-    {
-        _logger.LogInformation($"Client has connected. ConnectionId: {Context.ConnectionId}");
-        await base.OnConnectedAsync();
-    }
-
-    /// <summary>
-    /// Event handler for when a client disconnects.
-    /// </summary>
-    /// <param name="exception">The exception that caused the disconnection, if any.</param>
-    public override async Task OnDisconnectedAsync(Exception exception)
-    {
-        if (exception != null)
-        {
-            _logger.LogWarning(exception, $"Client disconnected unexpectedly. ConnectionId: {Context.ConnectionId}");
-        }
-        else
-        {
-            _logger.LogInformation($"Client has disconnected. ConnectionId: {Context.ConnectionId}");
-        }
-        await base.OnDisconnectedAsync(exception);
     }
 }

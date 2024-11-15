@@ -7,7 +7,7 @@ namespace NetShape.Core;
 
 public class Coordinator<TRequest, TResponse>
 {
-    private readonly IConnector<TResponse> _connector;
+    private readonly IConnector<TRequest, TResponse> _connector;
     private readonly IQueueService<GenericRequest<TRequest>> _requestQueue;
     private readonly IRequestProcessor<TRequest, TResponse> _processor;
     private readonly ILogger _logger;
@@ -16,7 +16,7 @@ public class Coordinator<TRequest, TResponse>
     private CancellationTokenSource _cancellationTokenSource;
     private Task _processingTask;
     
-    public Coordinator(IConnector<TResponse> connector,
+    public Coordinator(IConnector<TRequest, TResponse> connector,
         IQueueService<GenericRequest<TRequest>> queue,
         IRequestProcessor<TRequest, TResponse> processor,
         ILogger logger, 

@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetShape.Connectors;
+using NetShape.Connectors.SignalR;
 using NetShape.Core;
 using NetShape.Core.Models;
 
@@ -36,6 +38,9 @@ public class SignalRConnectorTests: IAsyncLifetime
             {
                 services.AddSignalR();
                 services.AddLogging();
+                services.AddSingleton<IConnector<string, string>, SignalRConnector<string, string>>();
+                services.AddSingleton<ILogger<RequestHub>, NullLogger<RequestHub>>();
+                services.AddSingleton<Hub, RequestHub>();
                 services.AddSingleton<ILogger<SignalRConnector<string, string>>, NullLogger<SignalRConnector<string, string>>>();
                 services.AddSingleton(_mockRequestReceiver.Object);
             })
@@ -44,7 +49,7 @@ public class SignalRConnectorTests: IAsyncLifetime
                 app.UseRouting();
                 app.UseEndpoints(endpoints =>
                 {
-                    endpoints.MapHub<SignalRConnector<string, string>>("/hub");
+                    endpoints.MapHub<RequestHub>("/hub");
                 });
             });
 
