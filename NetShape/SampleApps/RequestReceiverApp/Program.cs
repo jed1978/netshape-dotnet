@@ -41,9 +41,6 @@ public class Program
         
         // 註冊 IRequestReceiver
         builder.Services.AddSingleton<IRequestReceiver<string>, RequestReceiver<string>>();
-
-        // 註冊 IRequestProcessor
-        
         
         // Register SignalR Connector
         builder.Services.AddSingleton<IConnector<string, string>, SignalRConnector<string, string>>();
@@ -69,20 +66,18 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-        
+
+        app.UseHttpsRedirection();
+        app.UseDefaultFiles();
         app.UseStaticFiles();
-
         app.UseRouting();
-
-        app.UseAuthorization();
-
-        app.MapRazorPages();
-        
+        // app.UseAuthorization();
+        // app.MapRazorPages();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapHub<RequestHub>("/hub"); // SignalR Hub
         });
-
+        
         app.Run();
     }
 }
