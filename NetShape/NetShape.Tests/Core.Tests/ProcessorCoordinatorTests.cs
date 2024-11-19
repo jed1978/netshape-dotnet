@@ -106,4 +106,80 @@ public class ProcessorCoordinatorTests
         ));
         mockResponseQueue.Verify(q => q.EnqueueAsync(It.IsAny<GenericResponse<string>>()), Times.Never);
     }
+    
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_RequestQueue_Is_Null()
+    {
+        // Arrange
+        IQueueService<GenericRequest<string>> nullRequestQueue = null;
+        var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        var logger = NullLogger<ProcessorCoordinator<string, string>>.Instance;
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ProcessorCoordinator<string, string>(
+            nullRequestQueue,
+            mockResponseQueue.Object,
+            mockProcessor.Object,
+            logger
+        ));
+        Assert.Equal("requestQueue", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_ResponseQueue_Is_Null()
+    {
+        // Arrange
+        var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
+        IQueueService<GenericResponse<string>> nullResponseQueue = null;
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        var logger = NullLogger<ProcessorCoordinator<string, string>>.Instance;
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ProcessorCoordinator<string, string>(
+            mockRequestQueue.Object,
+            nullResponseQueue,
+            mockProcessor.Object,
+            logger
+        ));
+        Assert.Equal("responseQueue", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_Processor_Is_Null()
+    {
+        // Arrange
+        var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
+        var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
+        IRequestProcessor<string, string> nullProcessor = null;
+        var logger = NullLogger<ProcessorCoordinator<string, string>>.Instance;
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ProcessorCoordinator<string, string>(
+            mockRequestQueue.Object,
+            mockResponseQueue.Object,
+            nullProcessor,
+            logger
+        ));
+        Assert.Equal("processor", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_Logger_Is_Null()
+    {
+        // Arrange
+        var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
+        var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        ILogger<ProcessorCoordinator<string, string>> nullLogger = null;
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ProcessorCoordinator<string, string>(
+            mockRequestQueue.Object,
+            mockResponseQueue.Object,
+            mockProcessor.Object,
+            nullLogger
+        ));
+        Assert.Equal("logger", exception.ParamName);
+    }
 }

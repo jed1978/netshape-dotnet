@@ -25,10 +25,10 @@ public class ReceiverCoordinator<TRequest, TResponse> : IHostedService
     {
         _connector = connector ?? throw new ArgumentNullException(nameof(connector));
         _requestQueue = requestQueue ?? throw new ArgumentNullException(nameof(requestQueue));
-        _responseQueue = responseQueue ?? throw new ArgumentNullException(nameof(responseQueue));;
+        _responseQueue = responseQueue ?? throw new ArgumentNullException(nameof(responseQueue));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _requestReceiver = requestReceiver ?? throw new ArgumentNullException(nameof(requestReceiver));
         requestReceiver.OnRequestReceived += OnRequestReceivedAsync;
-        _requestReceiver = requestReceiver;
     }
     private async Task OnRequestReceivedAsync(IRequest<TRequest> request)
     {

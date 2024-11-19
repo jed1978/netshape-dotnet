@@ -23,7 +23,7 @@ public class ProcessorCoordinator<TRequest, TResponse> : IHostedService
         ILogger<ProcessorCoordinator<TRequest, TResponse>> logger)
     {
         _requestQueue = requestQueue ?? throw new ArgumentNullException(nameof(requestQueue));
-        _responseQueue = responseQueue ?? throw new ArgumentNullException(nameof(requestQueue));
+        _responseQueue = responseQueue ?? throw new ArgumentNullException(nameof(responseQueue));
         _processor = processor ?? throw new ArgumentNullException(nameof(processor));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }

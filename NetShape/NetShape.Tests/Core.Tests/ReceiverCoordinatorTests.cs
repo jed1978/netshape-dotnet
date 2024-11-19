@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NetShape.Core;
 using NetShape.Core.Models;
+using NetShape.Core.Processors;
 using NetShape.Core.Queues;
 
 namespace NetShape.Tests.Core.Tests;
@@ -129,5 +130,115 @@ public class ReceiverCoordinatorTests
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception, string>>()
         ));
+    }
+    
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_Connector_Is_Null()
+    {
+        // Arrange
+        IConnector<string, string> nullConnector = null;
+        var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
+        var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        var logger = NullLogger<ReceiverCoordinator<string, string>>.Instance;
+        var requestReceiver = new Mock<IRequestReceiver<string>>();
+        
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ReceiverCoordinator<string, string>(
+            nullConnector,
+            mockRequestQueue.Object,
+            mockResponseQueue.Object,
+            logger,
+            requestReceiver.Object
+        ));
+        Assert.Equal("connector", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_RequestQueue_Is_Null()
+    {
+        // Arrange
+        var mockConnector = new Mock<IConnector<string, string>>();
+        IQueueService<GenericRequest<string>> nullRequestQueue = null;
+        var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        var logger = NullLogger<ReceiverCoordinator<string, string>>.Instance;
+        var mockRequestReceiver = new Mock<IRequestReceiver<string>>();
+        
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ReceiverCoordinator<string, string>(
+            mockConnector.Object,
+            nullRequestQueue,
+            mockResponseQueue.Object,
+            logger,
+            mockRequestReceiver.Object
+        ));
+        Assert.Equal("requestQueue", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_ResponseQueue_Is_Null()
+    {
+        // Arrange
+        var mockConnector = new Mock<IConnector<string, string>>();
+        var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
+        IQueueService<GenericResponse<string>> nullResponseQueue = null;
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        var logger = NullLogger<ReceiverCoordinator<string, string>>.Instance;
+        var mockRequestReceiver = new Mock<IRequestReceiver<string>>();
+        
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ReceiverCoordinator<string, string>(
+            mockConnector.Object,
+            mockRequestQueue.Object,
+            nullResponseQueue,
+            logger,
+            mockRequestReceiver.Object
+        ));
+        Assert.Equal("responseQueue", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_RequestReceiver_Is_Null()
+    {
+        // Arrange
+        var mockConnector = new Mock<IConnector<string, string>>();
+        var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
+        var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
+        var logger = NullLogger<ReceiverCoordinator<string, string>>.Instance;
+        IRequestReceiver<string> nullRequestReceiver = null;
+        
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ReceiverCoordinator<string, string>(
+            mockConnector.Object,
+            mockRequestQueue.Object,
+            mockResponseQueue.Object,
+            logger,
+            nullRequestReceiver
+        ));
+        Assert.Equal("requestReceiver", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_Should_Throw_ArgumentNullException_When_Logger_Is_Null()
+    {
+        // Arrange
+        var mockConnector = new Mock<IConnector<string, string>>();
+        var mockRequestQueue = new Mock<IQueueService<GenericRequest<string>>>();
+        var mockResponseQueue = new Mock<IQueueService<GenericResponse<string>>>();
+        var mockProcessor = new Mock<IRequestProcessor<string, string>>();
+        ILogger<ReceiverCoordinator<string, string>> nullLogger = null;
+        var mockRequestReceiver = new Mock<IRequestReceiver<string>>();
+
+        // Act & Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => new ReceiverCoordinator<string, string>(
+            mockConnector.Object,
+            mockRequestQueue.Object,
+            mockResponseQueue.Object,
+            nullLogger,
+            mockRequestReceiver.Object
+        ));
+        Assert.Equal("logger", exception.ParamName);
     }
 }
