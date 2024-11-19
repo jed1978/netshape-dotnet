@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NetShape.Core.Models;
+using NetShape.Models;
 using NetShape.Queues;
 using StackExchange.Redis;
 

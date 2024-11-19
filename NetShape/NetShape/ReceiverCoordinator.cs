@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NetShape.Core.Models;
-using NetShape.Core.Queues;
+using NetShape.Core;
+using NetShape.Models;
 
-namespace NetShape.Core;
+namespace NetShape;
 
 public class ReceiverCoordinator<TRequest, TResponse> : IHostedService
 {

@@ -1,4 +1,6 @@
-namespace NetShape.Core.Models;
+using NetShape.Core;
+
+namespace NetShape.Models;
 
 public class GenericResponse<T>: IResponse<T>
 {

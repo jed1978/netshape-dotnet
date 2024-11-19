@@ -1,4 +1,4 @@
-namespace NetShape.Core.Models;
+namespace NetShape.Core;
 
 public interface IRequest<T>
 {

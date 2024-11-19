@@ -1,9 +1,8 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using NetShape.Core.Models;
-using NetShape.Core.Processors;
-using NetShape.Core.Queues;
+using NetShape.Core;
+using NetShape.Models;
 
 namespace NetShape;
 

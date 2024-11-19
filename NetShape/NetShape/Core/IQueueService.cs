@@ -1,4 +1,4 @@
-namespace NetShape.Core.Queues;
+namespace NetShape.Core;
 
 public interface IQueueService<T>
 {

@@ -5,9 +5,7 @@ using Microsoft.Extensions.Logging;
 using NetShape;
 using NetShape.Connectors;
 using NetShape.Core;
-using NetShape.Core.Models;
-using NetShape.Core.Processors;
-using NetShape.Core.Queues;
+using NetShape.Models;
 using NetShape.Queues;
 using StackExchange.Redis;
 

@@ -11,7 +11,7 @@ using Moq;
 using NetShape.Connectors;
 using NetShape.Connectors.SignalR;
 using NetShape.Core;
-using NetShape.Core.Models;
+using NetShape.Models;
 
 namespace NetShape.Tests.Connector.Tests;
 

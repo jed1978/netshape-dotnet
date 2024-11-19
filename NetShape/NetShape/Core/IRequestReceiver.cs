@@ -1,4 +1,4 @@
-using NetShape.Core.Models;
+using NetShape.Models;
 
 namespace NetShape.Core;
 

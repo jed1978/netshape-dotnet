@@ -1,9 +1,8 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using NetShape.Core.Models;
-using NetShape.Core.Processors;
-using NetShape.Core.Queues;
+using NetShape.Core;
+using NetShape.Models;
 
 namespace NetShape.Tests.Core.Tests;
 

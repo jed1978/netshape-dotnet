@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using NetShape.Core.Queues;
+using NetShape.Core;
 using StackExchange.Redis;
 
 namespace NetShape.Queues;

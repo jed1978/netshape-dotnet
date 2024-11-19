@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using NetShape.Core.Processors;
+using NetShape.Core;
 
 namespace ProcessorWorker;
 

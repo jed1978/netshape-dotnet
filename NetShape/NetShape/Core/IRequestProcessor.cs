@@ -1,4 +1,4 @@
-namespace NetShape.Core.Processors;
+namespace NetShape.Core;
 
 public interface IRequestProcessor<TRequest, TResponse>
 {

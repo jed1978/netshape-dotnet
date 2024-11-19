@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using NetShape.Core;
-using NetShape.Core.Models;
+using NetShape.Models;
 
 namespace NetShape.Connectors.SignalR;
 
